@@ -18,9 +18,13 @@ As a result, there is a need for a tool that can:
 - NLP will specifically be used to question the understanding of a given prompt given by a user and interprets the theology surrounding it. While doing so, the text will be processed with parts of the Catechism being taken and then identifying potential similarties between the statement and what the Catechism teaches. 
 - LLMs will be used to help explain Catechism passages provided and answer any doctrinal questions. At the same time, it will compare and contrast the users statements that may prose potential heresy's/incorrect statements against the Catholic Church.
 - Catechism passages will be retrieved through various methods learned in class (also some by personal knownledge) such as RAG (Retrieval-Augmented Generation), Text Classification, & Vectors.
-- Additional methods may be used to help better solve this problem.
+- Additional methods may be used to help better solve this problem as the project is further developed.
+
+The program would be written entirely in Python using JSON libaries (see Current Resources Below for details) in the Google Collab enviroment.
 
 **Current Resources / Libraries Planned To Use**:
-The Catechism of The Catholic Church: https://github.com/nossbigg/catechism-ccc-json
-OpenAI
-Google Collab
+- The Catechism of The Catholic Church: https://github.com/nossbigg/catechism-ccc-json
+- OpenAI
+- Google Collab
+
+**Important Note**: Ultimately, this project proposes a respectful amount of work and dedication as there is little projects and references out there. At the same time, this topic very much interests me and would prove helpful toward future career outlooks as I currently work in a Catholic Campus Ministry position. It can be rest assured, this project will not be taken with much dedication and love poured into it. _If you have concerns about the projects features or would like me to change aspects of it, please let me know as I'm very flexible._
