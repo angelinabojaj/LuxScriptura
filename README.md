@@ -1,2 +1,3 @@
-# CSI-5310-Project
-TBD
+# Catechism Interpretter & Corrector - CSI 5310 Project
+
+
