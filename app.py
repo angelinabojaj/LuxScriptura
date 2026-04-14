@@ -12,7 +12,7 @@ from bible import get_bible_verse
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-rag = RAGSystem("catechism.json")
+rag = RAGSystem("ccc.json")
 nlp = NLPClassifier()
 
 st.set_page_config(page_title="LuxScriptura", layout="wide")
