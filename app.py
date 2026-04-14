@@ -12,11 +12,13 @@ from bible import get_bible_verse
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-rag = RAGSystem("ccc.json")
-nlp = NLPClassifier()
-
+# Create Page Look
 st.set_page_config(page_title="LuxScriptura", layout="wide")
 st.title("✝️ LuxScriptura")
+
+# Implement Models Here
+rag = RAGSystem("ccc.json")
+nlp = NLPClassifier()
 
 user_input = st.text_area("Enter a theological question or statement")
 

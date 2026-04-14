@@ -1,64 +1,75 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+from functools import lru_cache
 
 BASE_URL = "https://bible.usccb.org/bible/"
 
+# Basic normalization map (expand as needed)
+BOOK_MAP = {
+    "genesis": "genesis",
+    "exodus": "exodus",
+    "matthew": "matthew",
+    "mark": "mark",
+    "luke": "luke",
+    "john": "john",
+    "1 john": "1john",
+    "2 john": "2john",
+    "3 john": "3john",
+    "romans": "romans",
+}
+
 
 def _format_reference(reference: str) -> str:
-    """
-    Converts 'John 3:16' → 'john/3'
-    USCCB uses book + chapter pages, not verse-level API.
-    """
     reference = reference.lower().strip()
 
-    # Split book from chapter/verse
-    match = re.match(r"([a-z\s]+)\s+(\d+)", reference)
+    match = re.match(r"([1-3]?\s*[a-z\s]+)\s+(\d+)", reference)
     if not match:
-        raise ValueError("Use format like 'John 3' or 'Genesis 1' (chapter-based only for USCCB scraping).")
+        raise ValueError("Use format like 'John 3' or '1 John 4'.")
 
-    book = match.group(1).replace(" ", "")
+    book = match.group(1).strip()
     chapter = match.group(2)
 
-    return f"{book}/{chapter}"
+    book_key = BOOK_MAP.get(book)
+    if not book_key:
+        # fallback: remove spaces
+        book_key = book.replace(" ", "")
+
+    return f"{book_key}/{chapter}"
 
 
 def get_bible_verse(reference: str) -> str:
-    """
-    Fetches Bible chapter text from USCCB.
-
-    NOTE:
-    USCCB is structured by chapter, not individual verse.
-    Example: 'John 3' → full chapter 3.
-    """
-
     try:
         path = _format_reference(reference)
-        url = BASE_URL + path + "/"
+        url = BASE_URL + path
 
         response = requests.get(url, timeout=10)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, "html.parser")
 
-        # USCCB stores scripture in divs with class "content-body" or similar
-        content_div = soup.find("div", class_="content-body")
+        # Try multiple fallback selectors
+        content = (
+            soup.find("div", class_="content-body")
+            or soup.find("div", class_="content-area")
+            or soup.find("article")
+        )
 
-        if not content_div:
-            return "Could not locate scripture text on USCCB page."
+        if not content:
+            return "Could not locate scripture text."
 
-        # Extract readable paragraphs
-        paragraphs = content_div.find_all("p")
-        text = "\n".join(p.get_text(strip=True) for p in paragraphs)
+        verses = content.find_all(["p", "span"])
 
-        return text.strip() if text else "No text found."
+        text = "\n".join(v.get_text(" ", strip=True) for v in verses)
+
+        # Clean empty lines
+        text = "\n".join(line for line in text.split("\n") if line.strip())
+
+        return text.strip() or "No text found."
 
     except Exception as e:
-        return f"Error fetching USCCB scripture: {str(e)}"
+        return f"Error fetching scripture: {e}"
 
 
-# =========================================================
-# Example usage
-# =========================================================
 if __name__ == "__main__":
     print(get_bible_verse("John 3"))
